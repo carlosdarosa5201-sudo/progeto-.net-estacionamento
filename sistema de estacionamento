@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estacionamento</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .control-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .control-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .control-card h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+
+        .btn-info:hover {
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .vehicles-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .vehicles-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .vehicles-header h3 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+        }
+
+        .vehicle-count {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .vehicles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .vehicle-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .vehicle-info {
+            margin-bottom: 15px;
+        }
+
+        .vehicle-plate {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .vehicle-model {
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .vehicle-time {
+            font-size: 0.9rem;
+            color: #495057;
+            background: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        .remove-btn {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .remove-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #b3d7ff;
+        }
+
+        .pricing-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .vehicles-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 Sistema de Estacionamento</h1>
+            <p>Gerencie veículos de forma eficiente e profissional</p>
+        </div>
+
+        <div class="main-content">
+            <div id="alertContainer"></div>
+
+            <div class="pricing-info">
+                <strong>💰 Tabela de Preços:</strong> Valor inicial: R$ 2,00 | Valor por hora: R$ 1,00
+            </div>
+
+            <div class="controls">
+                <div class="control-card">
+                    <h3>➕ Adicionar Veículo</h3>
+                    <form id="addVehicleForm">
+                        <div class="form-group">
+                            <label for="plate">Placa do Veículo:</label>
+                            <input type="text" id="plate" placeholder="Ex: ABC-1234" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="model">Modelo do Veículo:</label>
+                            <input type="text" id="model" placeholder="Ex: Honda Civic" required>
+                        </div>
+                        <button type="submit" class="btn">Adicionar Veículo</button>
+                    </form>
+                </div>
+
+                <div class="control-card">
+                    <h3>➖ Remover Veículo</h3>
+                    <form id="removeVehicleForm">
+                        <div class="form-group">
+                            <label for="removePlate">Selecionar Veículo:</label>
+                            <select id="removePlate" required>
+                                <option value="">Selecione um veículo</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Remover e Calcular</button>
+                    </form>
+                </div>
+
+                <div class="control-card">
+                    <h3>📋 Ações Rápidas</h3>
+                    <button id="listVehiclesBtn" class="btn btn-info" style="margin-bottom: 15px;">Atualizar Lista</button>
+                    <button id="clearAllBtn" class="btn btn-danger">Limpar Estacionamento</button>
+                </div>
+            </div>
+
+            <div class="vehicles-section">
+                <div class="vehicles-header">
+                    <h3>🚙 Veículos Estacionados</h3>
+                    <span class="vehicle-count" id="vehicleCount">0 veículos</span>
+                </div>
+                <div id="vehiclesList" class="vehicles-grid">
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+                        </svg>
+                        <h4>Nenhum veículo estacionado</h4>
+                        <p>Adicione o primeiro veículo para começar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Classe Veiculo
+        class Veiculo {
+            constructor(placa, modelo) {
+                this.placa = placa.toUpperCase();
+                this.modelo = modelo;
+                this.horaEntrada = new Date();
+            }
+
+            calcularTempo() {
+                const agora = new Date();
+                const tempoMs = agora - this.horaEntrada;
+                const horas = Math.ceil(tempoMs / (1000 * 60 * 60));
+                return Math.max(1, horas); // Mínimo 1 hora
+            }
+
+            calcularValor(precoInicial, precoPorHora) {
+                const horas = this.calcularTempo();
+                return precoInicial + (precoPorHora * (horas - 1));
+            }
+
+            getTempoFormatado() {
+                const entrada = this.horaEntrada;
+                return entrada.toLocaleString('pt-BR');
+            }
+        }
+
+        // Classe Estacionamento
+        class Estacionamento {
+            constructor(precoInicial = 2.00, precoPorHora = 1.00) {
+                this.veiculos = [];
+                this.precoInicial = precoInicial;
+                this.precoPorHora = precoPorHora;
+            }
+
+            adicionarVeiculo(placa, modelo) {
+                // Verificar se já existe
+                if (this.veiculos.find(v => v.placa === placa.toUpperCase())) {
+                    throw new Error('Veículo já está estacionado!');
+                }
+
+                const veiculo = new Veiculo(placa, modelo);
+                this.veiculos.push(veiculo);
+                return veiculo;
+            }
+
+            removerVeiculo(placa) {
+                const index = this.veiculos.findIndex(v => v.placa === placa.toUpperCase());
+                if (index === -1) {
+                    throw new Error('Veículo não encontrado!');
+                }
+
+                const veiculo = this.veiculos[index];
+                const valor = veiculo.calcularValor(this.precoInicial, this.precoPorHora);
+                const tempo = veiculo.calcularTempo();
+                
+                this.veiculos.splice(index, 1);
+                
+                return {
+                    veiculo,
+                    valor,
+                    tempo
+                };
+            }
+
+            listarVeiculos() {
+                return [...this.veiculos];
+            }
+
+            limparEstacionamento() {
+                this.veiculos = [];
+            }
+        }
+
+        // Instância do estacionamento
+        const estacionamento = new Estacionamento();
+
+        // Elementos DOM
+        const addForm = document.getElementById('addVehicleForm');
+        const removeForm = document.getElementById('removeVehicleForm');
+        const plateInput = document.getElementById('plate');
+        const modelInput = document.getElementById('model');
+        const removePlateSelect = document.getElementById('removePlate');
+        const vehiclesList = document.getElementById('vehiclesList');
+        const vehicleCount = document.getElementById('vehicleCount');
+        const alertContainer = document.getElementById('alertContainer');
+        const listVehiclesBtn = document.getElementById('listVehiclesBtn');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+
+        // Funções de UI
+        function showAlert(message, type = 'success') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        function updateVehicleSelect() {
+            removePlateSelect.innerHTML = '<option value="">Selecione um veículo</option>';
+            
+            estacionamento.listarVeiculos().forEach(veiculo => {
+                const option = document.createElement('option');
+                option.value = veiculo.placa;
+                option.textContent = `${veiculo.placa} - ${veiculo.modelo}`;
+                removePlateSelect.appendChild(option);
+            });
+        }
+
+        function updateVehiclesList() {
+            const veiculos = estacionamento.listarVeiculos();
+            vehicleCount.textContent = `${veiculos.length} veículo${veiculos.length !== 1 ? 's' : ''}`;
+
+            if (veiculos.length === 0) {
+                vehiclesList.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+                        </svg>
+                        <h4>Nenhum veículo estacionado</h4>
+                        <p>Adicione o primeiro veículo para começar</p>
+                    </div>
+                `;
+                return;
+            }
+
+            vehiclesList.innerHTML = veiculos.map(veiculo => `
+                <div class="vehicle-card">
+                    <div class="vehicle-info">
+                        <div class="vehicle-plate">${veiculo.placa}</div>
+                        <div class="vehicle-model">${veiculo.modelo}</div>
+                        <div class="vehicle-time">Entrada: ${veiculo.getTempoFormatado()}</div>
+                    </div>
+                    <button class="remove-btn" onclick="removeVehicleQuick('${veiculo.placa}')">
+                        Remover Veículo
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeVehicleQuick(placa) {
+            try {
+                const resultado = estacionamento.removerVeiculo(placa);
+                showAlert(
+                    `Veículo ${resultado.veiculo.placa} removido! Tempo: ${resultado.tempo}h | Valor: R$ ${resultado.valor.toFixed(2)}`,
+                    'info'
+                );
+                updateVehiclesList();
+                updateVehicleSelect();
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
+
+        // Event Listeners
+        addForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const placa = plateInput.value.trim();
+            const modelo = modelInput.value.trim();
+            
+            if (!placa || !modelo) {
+                showAlert('Por favor, preencha todos os campos!', 'error');
+                return;
+            }
+
+            try {
+                estacionamento.adicionarVeiculo(placa, modelo);
+                showAlert(`Veículo ${placa.toUpperCase()} adicionado com sucesso!`);
+                plateInput.value = '';
+                modelInput.value = '';
+                updateVehiclesList();
+                updateVehicleSelect();
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        });
+
+        removeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const placa = removePlateSelect.value;
+            
+            if (!placa) {
+                showAlert('Por favor, selecione um veículo!', 'error');
+                return;
+            }
+
+            try {
+                const resultado = estacionamento.removerVeiculo(placa);
+                showAlert(
+                    `Veículo ${resultado.veiculo.placa} removido! Tempo: ${resultado.tempo}h | Valor: R$ ${resultado.valor.toFixed(2)}`,
+                    'info'
+                );
+                updateVehiclesList();
+                updateVehicleSelect();
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        });
+
+        listVehiclesBtn.addEventListener('click', () => {
+            updateVehiclesList();
+            showAlert('Lista atualizada!');
+        });
+
+        clearAllBtn.addEventListener('click', () => {
+            if (estacionamento.listarVeiculos().length === 0) {
+                showAlert('Estacionamento já está vazio!', 'error');
+                return;
+            }
+
+            if (confirm('Tem certeza que deseja remover todos os veículos?')) {
+                estacionamento.limparEstacionamento();
+                updateVehiclesList();
+                updateVehicleSelect();
+                showAlert('Estacionamento limpo com sucesso!');
+            }
+        });
+
+        // Inicialização
+        updateVehiclesList();
+        updateVehicleSelect();
+
+        // Tornar função global para uso nos botões
+        window.removeVehicleQuick = removeVehicleQuick;
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97ca5c34d3771cf7',t:'MTc1NzQ1OTQzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
